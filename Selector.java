@@ -1,11 +1,11 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class Selection here.
+ * Write a description of class Selector here.
  * 
  * @author Michael Bisgaard Olesen
  */
-public class Selection extends Actor {
+public class Selector extends Actor {
     private boolean selectionStarted = false;
     
     private int selectionX1;
@@ -13,7 +13,7 @@ public class Selection extends Actor {
     private int selectionX2;
     private int selectionY2;
     
-    public Selection(int width, int height) {
+    public Selector(int width, int height) {
         GreenfootImage img = new GreenfootImage(width, height);
         img.setColor(Color.GRAY);
         setImage(img);
