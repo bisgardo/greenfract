@@ -18,6 +18,7 @@ public class FractalWorld extends World {
         int h = getHeight();
         
         addObject(new Selector(w, h), w / 2, h / 2);
+        addObject(new Saver("out"), 0, 0);
         
         double xMin = -2.2;
         double xMax = 1.0;
