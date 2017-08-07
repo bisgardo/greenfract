@@ -8,8 +8,7 @@ import greenfoot.*;
  * @author Michael Bisgaard Olesen
  */
 public class Selector extends Actor {
-    private Pixel from = null;
-    private Pixel to = null;
+    private Selection selection;
     
     public Selector(int width, int height) {
         GreenfootImage img = new GreenfootImage(width, height);
@@ -19,7 +18,7 @@ public class Selector extends Actor {
     
     @Override
     public void act() {
-        if (from == null) {
+        if (selection == null) {
             if (Greenfoot.mouseClicked(this)) {
                 beginSelection();
             }
@@ -27,7 +26,7 @@ public class Selector extends Actor {
             endSelection();
         } else if (Greenfoot.isKeyDown("escape")) {
             clearSelection();
-        } else if (Greenfoot.mouseMoved(this)) {
+        } else {
             updateSelection();
         }
     }
@@ -39,7 +38,7 @@ public class Selector extends Actor {
             return;
         }
         
-        from = new Pixel(info.getX(), info.getY());
+        selection = Selection.from(new Pixel(info.getX(), info.getY()));
     }
     
     private void endSelection() {
@@ -53,6 +52,9 @@ public class Selector extends Actor {
         double x2 = area.xMax;
         double y2 = area.yMax;
         
+        Pixel from = selection.getFrom();
+        Pixel to = selection.getTo();
+        
         // TODO Make a method on Area.
         double newX1 = from.x * (x2 - x1) / width + x1;
         double newY1 = from.y * (y2 - y1) / height + y1;
@@ -64,11 +66,24 @@ public class Selector extends Actor {
     }
     
     private void updateSelection() {
+        boolean ctrl = Greenfoot.isKeyDown("control");
+        boolean shift = Greenfoot.isKeyDown("shift");
+        if (!Greenfoot.mouseMoved(this) && !ctrl && !shift) {
+            return;
+        }
+        
         FractalWorld world = (FractalWorld) getWorld();
         double ratio = world.getRatio();
         
         MouseInfo mouse = Greenfoot.getMouseInfo();
-        to = from.resolveTo(mouse.getX(), mouse.getY(), ratio);
+        if (mouse == null) {
+            return;
+        }
+        
+        int x = mouse.getX();
+        int y = mouse.getY();
+        
+        selection.setCursor(x, y, ratio, shift, ctrl);
         
         drawSelection();
     }
@@ -76,6 +91,9 @@ public class Selector extends Actor {
     private void drawSelection() {
         GreenfootImage img = getImage();
         img.clear();
+        
+        Pixel from = selection.getFrom();
+        Pixel to = selection.getTo();
         img.drawRect(from.x, from.y, to.x - from.x, to.y - from.y);
         
         // TODO Use 'img.setColor' and 'img.drawString' to print coordinates in corners.
@@ -84,7 +102,6 @@ public class Selector extends Actor {
     private void clearSelection() {
         GreenfootImage img = getImage();
         img.clear();
-        from = null;
-        to = null;
+        selection = null;
     }
 }
