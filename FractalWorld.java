@@ -7,6 +7,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class FractalWorld extends World {
     private final Fractal fractal = new MandelbrotFractal();
+    private final FractalDrawer drawer = new SequentialFractalDrawer();
     
     private double currentX1;
     private double currentY1;
@@ -56,7 +57,9 @@ public class FractalWorld extends World {
         currentX2 = x2;
         currentY2 = y2;
         
-        FractalDrawer.draw(fractal, new FractalWorldCanvas(getBackground()), x1, y1, x2, y2);
+        //long time = System.currentTimeMillis();
+        drawer.draw(fractal, new FractalWorldCanvas(getBackground()), x1, y1, x2, y2);
+        //System.out.println(String.format("Fractal drawn in %d ms", System.currentTimeMillis() - time));
         
         // TODO Use 'sheet.setColor' and 'sheet.drawString' to print coordinates in corners.
     }

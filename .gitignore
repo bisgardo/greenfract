@@ -1,5 +1,9 @@
+.*
+!.gitignore
 *.class
 *.ctxt
+lib
 doc
 images
 sounds
+
