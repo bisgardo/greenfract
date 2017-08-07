@@ -1,4 +1,5 @@
 import greenfoot.*;
+import java.io.File;
 
 /**
  * World that acts as a sheet of paper on which we can draw pixels.
@@ -18,7 +19,15 @@ public class FractalWorld extends World {
         int h = getHeight();
         
         addObject(new Selector(w, h), w / 2, h / 2);
-        addObject(new Saver("out"), 0, 0);
+        addObject(new Saver(new File("out")), 0, 0);
+        addObject(new Animator(), 0, 0);
+        
+        reset();
+    }
+    
+    public void reset() {
+        int w = getWidth();
+        int h = getHeight();
         
         double xMin = -2.2;
         double xMax = 1.0;
@@ -42,8 +51,8 @@ public class FractalWorld extends World {
         
         Greenfoot.setSpeed(50);
         
-        // For some reason, after resetting we need to manually pause and
-        // resume execution for click events to go through.
+        // It appears that, for whatever reason, after resetting we need to manually pause and
+        // then resume execution for click events to go through.
         Greenfoot.stop();
         
         Greenfoot.start();

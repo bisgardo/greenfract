@@ -43,26 +43,15 @@ public class Selector extends Actor {
     
     private void endSelection() {
         FractalWorld world = (FractalWorld) getWorld();
-        int width = world.getWidth();
-        int height = world.getHeight();
+        int w = world.getWidth();
+        int h = world.getHeight();
         
         Area area = world.getArea();
-        double x1 = area.xMin;
-        double y1 = area.yMin;
-        double x2 = area.xMax;
-        double y2 = area.yMax;
-        
         Pixel from = selection.getFrom();
         Pixel to = selection.getTo();
         
-        // TODO Make a method on Area.
-        double newX1 = from.x * (x2 - x1) / width + x1;
-        double newY1 = from.y * (y2 - y1) / height + y1;
-        double newX2 = to.x * (x2 - x1) / width + x1;
-        double newY2 = to.y * (y2 - y1) / height + y1;
-        
         clearSelection();
-        world.drawFractal(new Area(newX1, newX2, newY1, newY2));
+        world.drawFractal(area.subArea(from, to, w, h));
     }
     
     private void updateSelection() {

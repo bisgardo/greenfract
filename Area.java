@@ -15,4 +15,21 @@ public class Area {
         this.yMin = yMin;
         this.yMax = yMax;
     }
+    
+    public Area subArea(Pixel from, Pixel to, int width, int height) {
+        double dx = xMax - xMin;
+        double dy = yMax - yMin;
+        
+        return new Area(
+            from.x * dx / width + xMin,
+            to.x * dx / width + xMin,
+            from.y * dy / height + yMin,
+            to.y * dy / height + yMin
+        );
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("[%f, %f]x[%f, %f]", xMin, xMax, yMin, yMax);
+    }
 }
