@@ -1,5 +1,5 @@
 /**
- * Class for drawing a fractal onto a Greenfoot image.
+ * Interface for class that can draw a fractal onto a canvas.
  * 
  * @author Michael Bisgaard Olesen
  */
@@ -11,6 +11,5 @@ public interface FractalDrawer {
         void setValue(int x, int y, int value);
     }
     
-    // TODO Make 'Selection' type with the coordinates.
-    void draw(Fractal fractal, Canvas canvas, double x1, double y1, double x2, double y2);
+    void draw(Fractal fractal, Canvas canvas, Area area);
 }

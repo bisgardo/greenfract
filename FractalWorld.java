@@ -1,4 +1,4 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 
 /**
  * World that acts as a sheet of paper on which we can draw pixels.
@@ -9,10 +9,7 @@ public class FractalWorld extends World {
     private final Fractal fractal = new MandelbrotFractal();
     private final FractalDrawer drawer = new SequentialFractalDrawer();
     
-    private double currentX1;
-    private double currentY1;
-    private double currentX2;
-    private double currentY2;
+    private Area area;
     
     public FractalWorld() {
         super(800, 600, 1);
@@ -40,7 +37,7 @@ public class FractalWorld extends World {
             yMax *= tmp;
         }
         
-        drawFractal(xMin, yMin, xMax, yMax);
+        drawFractal(new Area(xMin, xMax, yMin, yMax));
         
         Greenfoot.setSpeed(50);
         
@@ -51,33 +48,19 @@ public class FractalWorld extends World {
         Greenfoot.start();
     }
     
-    public void drawFractal(double x1, double y1, double x2, double y2) {
-        currentX1 = x1;
-        currentY1 = y1;
-        currentX2 = x2;
-        currentY2 = y2;
-        
+    public void drawFractal(Area area) {
+    	// TODO Might want to compute/return area that is guaranteed to have correct aspect ratio.
+    	this.area = area;
+    	
         //long time = System.currentTimeMillis();
-        drawer.draw(fractal, new FractalWorldCanvas(getBackground()), x1, y1, x2, y2);
+        drawer.draw(fractal, new FractalWorldCanvas(getBackground()), area);
         //System.out.println(String.format("Fractal drawn in %d ms", System.currentTimeMillis() - time));
         
         // TODO Use 'sheet.setColor' and 'sheet.drawString' to print coordinates in corners.
     }
     
-    public double getCurrentX1() {
-        return currentX1;
-    }
-    
-    public double getCurrentY1() {
-        return currentY1;
-    }
-    
-    public double getCurrentX2() {
-        return currentX2;
-    }
-    
-    public double getCurrentY2() {
-        return currentY2;
+    public Area getArea() {
+        return area;
     }
     
     public double getRatio() {

@@ -1,17 +1,15 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 
 /**
- * Write a description of class Selector here.
+ * An "actor" component overlay of the entire image that listens to
+ * mouse events, draws a selection rectangle, and initiates a redraw
+ * of the world when selection has completed.
  * 
  * @author Michael Bisgaard Olesen
  */
 public class Selector extends Actor {
-    private boolean selectionStarted = false;
-    
-    private int selectionX1;
-    private int selectionY1;
-    private int selectionX2;
-    private int selectionY2;
+    private Pixel from = null;
+    private Pixel to = null;
     
     public Selector(int width, int height) {
         GreenfootImage img = new GreenfootImage(width, height);
@@ -21,7 +19,7 @@ public class Selector extends Actor {
     
     @Override
     public void act() {
-        if (!selectionStarted) {
+        if (from == null) {
             if (Greenfoot.mouseClicked(this)) {
                 beginSelection();
             }
@@ -41,9 +39,7 @@ public class Selector extends Actor {
             return;
         }
         
-        selectionX1 = info.getX();
-        selectionY1 = info.getY();
-        selectionStarted = true;
+        from = new Pixel(info.getX(), info.getY());
     }
     
     private void endSelection() {
@@ -51,48 +47,36 @@ public class Selector extends Actor {
         int width = world.getWidth();
         int height = world.getHeight();
         
-        double x1 = world.getCurrentX1();
-        double y1 = world.getCurrentY1();
-        double x2 = world.getCurrentX2();
-        double y2 = world.getCurrentY2();
+        Area area = world.getArea();
+        double x1 = area.xMin;
+        double y1 = area.yMin;
+        double x2 = area.xMax;
+        double y2 = area.yMax;
         
-        double newX1 = selectionX1 * (x2 - x1) / width + x1;
-        double newY1 = selectionY1 * (y2 - y1) / height + y1;
-        double newX2 = selectionX2 * (x2 - x1) / width + x1;
-        double newY2 = selectionY2 * (y2 - y1) / height + y1;
+        // TODO Make a method on Area.
+        double newX1 = from.x * (x2 - x1) / width + x1;
+        double newY1 = from.y * (y2 - y1) / height + y1;
+        double newX2 = to.x * (x2 - x1) / width + x1;
+        double newY2 = to.y * (y2 - y1) / height + y1;
         
-        world.drawFractal(newX1, newY1, newX2, newY2);
         clearSelection();
+        world.drawFractal(new Area(newX1, newX2, newY1, newY2));
     }
     
     private void updateSelection() {
         FractalWorld world = (FractalWorld) getWorld();
         double ratio = world.getRatio();
         
-        MouseInfo info = Greenfoot.getMouseInfo();
-        int newX = info.getX();
-        int newY = info.getY();
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        to = from.resolveTo(mouse.getX(), mouse.getY(), ratio);
         
-        // Ensure that aspect ratio is kept.
-        if ((newX - selectionX1) * ratio > newY - selectionY1) {
-            selectionX2 = newX;
-            selectionY2 = (int) Math.round(
-                    (newX - selectionX1) * ratio + selectionY1
-            );
-        } else {
-            selectionX2 = (int) Math.round(
-                    (newY - selectionY1) / ratio + selectionX1
-            );
-            selectionY2 = newY;
-        }
-        
-        drawSelection(selectionX1, selectionY1, selectionX2, selectionY2);
+        drawSelection();
     }
     
-    private void drawSelection(int x1, int y1, int x2, int y2) {
+    private void drawSelection() {
         GreenfootImage img = getImage();
         img.clear();
-        img.drawRect(x1, y1, x2 - x1, y2 - y1);
+        img.drawRect(from.x, from.y, to.x - from.x, to.y - from.y);
         
         // TODO Use 'img.setColor' and 'img.drawString' to print coordinates in corners.
     }
@@ -100,6 +84,7 @@ public class Selector extends Actor {
     private void clearSelection() {
         GreenfootImage img = getImage();
         img.clear();
-        selectionStarted = false;
+        from = null;
+        to = null;
     }
 }
