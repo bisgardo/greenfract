@@ -20,12 +20,14 @@ public class Animator extends Actor {
         if (target == null) {
             if (Greenfoot.isKeyDown("a")) {
                 target = area;
-                world.reset();
                 
+                index = 0;
                 saveDir = new File(Saver.name(world));
                 if (saveDir.mkdirs()) {
                     System.out.println(String.format("Created directory '%s'", saveDir));
                 }
+                
+                world.reset();
             }
             return;
         }
@@ -37,10 +39,10 @@ public class Animator extends Actor {
         double dyBottom = area.yMax - target.yMax;
         
         Area nextArea = new Area(
-            area.xMin + dxLeft / 20,
-            area.xMax - dxRight / 20,
-            area.yMin + dyTop / 20,
-            area.yMax - dyBottom / 20
+            area.xMin + dxLeft / Settings.ANIMATION_RESOLUTION,
+            area.xMax - dxRight / Settings.ANIMATION_RESOLUTION,
+            area.yMin + dyTop / Settings.ANIMATION_RESOLUTION,
+            area.yMax - dyBottom / Settings.ANIMATION_RESOLUTION
         );
         world.drawFractal(nextArea);
         
@@ -50,6 +52,13 @@ public class Animator extends Actor {
         
         if (zero(dxLeft) || zero(dxLeft) || zero(dxLeft) || zero(dxLeft)) {
             target = null;
+            // TODO Can images be streamed into ffmpeg one at a time, as they're produced?
+            System.out.println(
+                String.format(
+                    "Run a command like '%s' to combine pictures into a video",
+                    "ffmpeg -i %04d.png -c:v libx264 -preset veryslow -crf 0 output.mkv"
+                )
+            );
         }
     }
     
